@@ -1,4 +1,3 @@
-
 public class PCB implements Comparable<PCB>
 {
     
@@ -25,13 +24,15 @@ public class PCB implements Comparable<PCB>
         remainingTime = cpuBurst;
     }
 
-    @Override
-    public String toString() {
-        return "PCB{" + "processID=" + processID + ", priority=" + priority + ", arrivalTime=" + arrivalTime + ", cpuBurst=" + cpuBurst + ", startTime=" + startTime + ", terminationTime=" + terminationTime + ", turnaroundTime=" + turnaroundTime + ", waitingTime=" + waitingTime + ", responseTime=" + responseTime + '}';
+    public String toString() 
+    {
+        return "PCB { " + "processID=" + processID + ", priority=" + priority + ", arrivalTime=" + arrivalTime + ", cpuBurst=" + cpuBurst + ", startTime=" + startTime + ", terminationTime=" + terminationTime + ", turnaroundTime=" + turnaroundTime + ", waitingTime=" + waitingTime + ", responseTime=" + responseTime +  " }";
     }
     
-    public int compareTo(PCB p) 
+    public int compareTo(PCB p) //for SJF sorting
     {
         return this.cpuBurst - p.cpuBurst;
     }
 }
+
+
