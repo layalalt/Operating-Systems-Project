@@ -29,9 +29,8 @@ public class CPUscheduler
                     
                     System.out.print("How many processes do you have: ");
                     processNum = key.nextInt();
-                    processes = new PCB[processNum];
-                    Q1 = new PCB[processNum];
-                    Q2 = new PCB[processNum]; //we can count each number of prio and make based on that //fix it later
+                    processes = new PCB[processNum]; //initial array that will store processes
+                    int Q1size = 1, Q2size = 1;
                     int Q2processCounter = 0; //counts number of processes in Q2 for proper sorting
                     totalTime = 0;
                     
@@ -40,6 +39,10 @@ public class CPUscheduler
                     {
                        System.out.print("Enter process #" + (i+1) + "'s priority(1 or 2): ");
                        int priority = key.nextInt();
+                       if(priority == 1)
+                          Q1size++;
+                       else
+                          Q2size++; 
                        
                        System.out.print("Enter process #" + (i+1) + "'s arrival time: ");
                        int arrivalTime = key.nextInt();
@@ -51,13 +54,16 @@ public class CPUscheduler
                        processes[i] = new PCB(i+1, priority, arrivalTime, CPUBurst);
                        System.out.println();
                     }
+                    
+                    Q1 = new PCB[Q1size];               
+                    Q2 = new PCB[Q2size];
                     Gantt = new String[totalTime]; 
                     
                     for(int i=0; i<100; i++) //just assumes it will take less than 100 ms (clock simulator)
                     {
-                        int startIndex = Q2h, endIndex;
+                        int startIndex = Q2h, endIndex; 
                         boolean SJFInserted = false;
-                        if(Q2[Q2h] != null && Q2[Q2h].cpuBurst != Q2[Q2h].remainingTime) //process is executing in SJF queue (prevents preemption)
+                        if(Q2[Q2h] != null && (Q2[Q2h].cpuBurst != Q2[Q2h].remainingTime)) //first process started executing in SJF queue (prevents preemption)
                            startIndex++;
                         for(int j=0; j<processNum; j++)
                         {
@@ -66,31 +72,31 @@ public class CPUscheduler
                               if(processes[j].priority == 1)
                               {
                                   Q1[Q1t] = processes[j]; 
-                                  Q1t = (Q1t+1)%processNum; //regular insertion              
+                                  Q1t = (Q1t+1)%Q1size; //regular insertion              
                               }
-                              else
+                              else //priority == 2
                               {
                                   Q2[Q2t] = processes[j];
-                                  Q2t = (Q2t+1)%processNum;
+                                  Q2t = (Q2t+1)%Q2size;
                                   Q2processCounter++;
                                   SJFInserted = true;
                               }
                             }
                         }
                         
-                        endIndex = Q2processCounter;
-                        if(SJFInserted) //sort if a new element is added only
+                        endIndex = Q2processCounter; //prevents null pointer exceptions by ensuring only initialized processes are sorted
+                        if(SJFInserted) //sorts only if a new element is added
                           Arrays.sort(Q2, startIndex, endIndex);
                         
-                        if(Q1[Q1h] != null && Q1[Q1h].timeSliceRemainingTime == 0) // time slice of executing process finished and must be readded
+                        if(Q1[Q1h] != null && (Q1[Q1h].timeSliceRemainingTime == 0)) // time slice of executing process finished and must be readded in RR queue
                         {         
                              Q1[Q1h].timeSliceRemainingTime = -1;
                              Q1[Q1t] = Q1[Q1h];
-                             Q1t = (Q1t+1)%processNum;
-                             Q1h = (Q1h+1)%processNum; 
+                             Q1t = (Q1t+1)%Q1size;
+                             Q1h = (Q1h+1)%Q1size; 
                         }  
                         
-                        if(Q1[Q1h] != null && Q1[Q1h].remainingTime != 0) //not empty
+                        if(Q1[Q1h] != null && (Q1[Q1h].remainingTime != 0)) //not empty
                         {
                             if(Q1[Q1h].responseTime == -1) //did not get scheduled yet
                             {
@@ -98,10 +104,11 @@ public class CPUscheduler
                                Q1[Q1h].startTime = i;
                             }
 
-                            if(Q1[Q1h].timeSliceRemainingTime == -1) //not initialized
+                            if(Q1[Q1h].timeSliceRemainingTime == -1) //didn't start executing in this burst
                                 Q1[Q1h].timeSliceRemainingTime = Math.min(3, Q1[Q1h].remainingTime);
                             
                             Gantt[GanttIndex++] = Q1[Q1h].processID;
+                            
                             Q1[Q1h].remainingTime -= 1;
                             Q1[Q1h].timeSliceRemainingTime -= 1;
                           
@@ -110,11 +117,11 @@ public class CPUscheduler
                               Q1[Q1h].terminationTime = i+1;
                               Q1[Q1h].turnaroundTime = Q1[Q1h].terminationTime - Q1[Q1h].arrivalTime;
                               Q1[Q1h].waitingTime = Q1[Q1h].turnaroundTime - Q1[Q1h].cpuBurst;
-                              Q1h = (Q1h+1)%processNum;
+                              Q1h = (Q1h+1)%Q1size;
                             }                
                         }
                         
-                        else if(Q2[Q2h] != null && Q2[Q2h].remainingTime != 0) 
+                        else if(Q2[Q2h] != null && (Q2[Q2h].remainingTime != 0)) //not empty 
                         {
                           
                             PCB currentProcess = Q2[Q2h]; //for ease of manipulation
@@ -124,19 +131,20 @@ public class CPUscheduler
                                currentProcess.startTime = i;
                             }
                             
-                            Gantt[GanttIndex++] = currentProcess.processID;                       
+                            Gantt[GanttIndex++] = currentProcess.processID; 
+                            
                             currentProcess.remainingTime -= 1;
 
-                            if(currentProcess.remainingTime == 0) 
+                            if(currentProcess.remainingTime == 0) //process terminated
                             {
                               currentProcess.terminationTime = i+1;
                               currentProcess.turnaroundTime = currentProcess.terminationTime - currentProcess.arrivalTime;
                               currentProcess.waitingTime = currentProcess.turnaroundTime - currentProcess.cpuBurst;
-                              Q2h = (Q2h+1)%(processNum);
+                              Q2h = (Q2h+1)%Q2size;
                             } 
                         } 
                         
-                        else
+                        else //check whether to terminate scheduler
                         {
                           boolean terminationFlag = true;
                           for(int j=0; j<processNum; j++)
@@ -152,13 +160,14 @@ public class CPUscheduler
                     }
                     //break;
 
-                //case 2: testing
+              //case 2: testing
                     for(int i=0; i<processNum; i++)
-                      System.out.println(processes[i].toString());
+                      System.out.println(processes[i]);
                     
                     for(int i=0; i<Gantt.length; i++)
                       System.out.print(Gantt[i] + " ");
-                    System.out.println();
+                    System.out.println("\n");
+                    
                     break;
                     
                 case 3:
@@ -169,20 +178,12 @@ public class CPUscheduler
                 default:
                     
                     System.out.println("Please ensure the number is within the allowed range!");
-                    break;
-                    
+                    break; 
                 
-            }
-               
+            }     
             
-        }while(loopFlag);
-        
+        }while(loopFlag);  
     }      
-}
-
-    
-    
-    
 }
     }       
     
