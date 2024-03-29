@@ -33,6 +33,19 @@ public class PCB implements Comparable<PCB>
     {
         return this.cpuBurst - p.cpuBurst;
     }
+    
+    public void displayInfo() 
+    {
+        System.out.print("Process ID: " + processID);
+        System.out.print(" - Priority: " + priority);
+        System.out.print(" - Arrival Time: " + arrivalTime);
+        System.out.print(" - CPU Burst: " + cpuBurst);
+        System.out.print(" - Start Time: " + startTime);
+        System.out.print(" - Termination Time: " + terminationTime);
+        System.out.print(" - Turnaround Time: " + turnaroundTime);
+        System.out.print(" - Waiting Time: " + waitingTime);
+        System.out.print(" - Response Time: " + responseTime);
+        System.out.println();
+        
+    }
 }
-
-
