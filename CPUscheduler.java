@@ -160,13 +160,27 @@ public class CPUscheduler
                     }
                     //break;
 
-              //case 2: testing
+              case 2: 
                     for(int i=0; i<processNum; i++)
-                      System.out.println(processes[i]);
+                      System.out.println(processes[i].displayInfo());
                     
                     for(int i=0; i<Gantt.length; i++)
                       System.out.print(Gantt[i] + " ");
                     System.out.println("\n");
+
+                     
+                    for(int i = 0; i < processNum; i++)
+		{
+			totalTimeW += processes[i].getWaitingTime();
+			totalTimeTA += processes[i].getTurnaroundTime();
+            totalTimeR += processes[i].getResponseTime();
+		}
+
+		System.out.println("\n Average Waiting Time is: " +totalTimeW/processNum);
+		System.out.println("\n Average Turnaround Time is: "+ totalTimeTA/processNum);
+        System.out.println("\n Average Response Time is: "+ totalTimeR/processNum);
+	
+
                     
                     break;
                     
