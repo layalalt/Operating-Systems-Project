@@ -17,6 +17,8 @@ public class CPUscheduler
             System.out.print("Enter the number: ");
             int menu = key.nextInt();
             int totalTime = 0;
+		int totalTimeR=0 ,totalTimeW= 0;
+            int totalTimeTA = 0;
             PCB processes [], Q1 [], Q2 [];
             int Q1h = 0, Q1t = 0, Q2h = 0, Q2t = 0; //head and tail pointers for the queues
             String Gantt []; //Gantt chart simulator
