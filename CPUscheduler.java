@@ -16,14 +16,13 @@ public class CPUscheduler
                                "3. Exit the program.");
             System.out.print("Enter the number: ");
             int menu = key.nextInt();
-            int totalTime = 0;
-		int totalTimeR=0 ,totalTimeW= 0;
-            int totalTimeTA = 0;
-            PCB processes [], Q1 [], Q2 [];
+            int totalTime = 0, totalTimeR = 0 ,totalTimeW = 0, totalTimeTA = 0;
+            PCB processes [] = new PCB[1], Q1 [], Q2 [];
             int Q1h = 0, Q1t = 0, Q2h = 0, Q2t = 0; //head and tail pointers for the queues
-            String Gantt []; //Gantt chart simulator
+            String Gantt [] = new String[1]; //Gantt chart simulator
             int GanttIndex = 0;
             int processNum = 0;
+            
             
             switch(menu)
             {
@@ -160,31 +159,60 @@ public class CPUscheduler
                             break;
                         }    
                     }
-                    //break;
-
-              case 2: 
-                    for(int i=0; i<processNum; i++)
-                      System.out.println(processes[i].displayInfo());
                     
-                    for(int i=0; i<Gantt.length; i++)
-                      System.out.print(Gantt[i] + " ");
+                    
+                case 2: 
+                    
+                    
+                    for(int i=0; i<processNum; i++)      
+                        processes[i].displayInfo();
+                    
+                    System.out.println("\n");
+  
+                    
+                    for(int i=0; i<Gantt.length; i++) //testing
+                       System.out.print(Gantt[i] + " ");
+                    
                     System.out.println("\n");
 
-                     
-                    for(int i = 0; i < processNum; i++)
-		{
-			totalTimeW += processes[i].getWaitingTime();
-			totalTimeTA += processes[i].getTurnaroundTime();
-            totalTimeR += processes[i].getResponseTime();
-		}
+                    StringBuilder order = new StringBuilder();
+                    Set<String> seenProcesses = new HashSet<>();
 
-		System.out.println("\n Average Waiting Time is: " +totalTimeW/processNum);
-		System.out.println("\n Average Turnaround Time is: "+ totalTimeTA/processNum);
-        System.out.println("\n Average Response Time is: "+ totalTimeR/processNum);
-	
+                    for(String process : Gantt) 
+                    {
+                       if(!seenProcesses.contains(process)) //first time encountering the process
+                       {
+                         if(order.length() != 0) 
+                            order.append("|");
+                
+                         order.append(process);
+                         seenProcesses.add(process);
+                       } 
+                       else if(!process.equals(order.substring(order.length() - 2))) //second time encountering it and it is separated by another process
+                           order.append("|").append(process);
+            
+                    }
+
+                    System.out.println("[" + order + "]");
+                   
+                            
+                    System.out.println("\n");
 
                     
+                    for(int i=0; i<processNum; i++)
+		    {
+			totalTimeW += processes[i].waitingTime;
+			totalTimeTA += processes[i].turnaroundTime;
+                        totalTimeR += processes[i].responseTime;
+		    }
+
+		    System.out.printf("Average Waiting Time is: %.2f \n", totalTimeW/(double)processNum);
+		    System.out.printf("Average Turnaround Time is: %.2f \n", totalTimeTA/(double)processNum);
+                    System.out.printf("Average Response Time is: %.2f \n\n", totalTimeR/(double)processNum);
+
                     break;
+                    
+                    
                     
                 case 3:
                     
@@ -199,8 +227,13 @@ public class CPUscheduler
             }     
             
         }while(loopFlag);  
+        
+        System.out.println();
+        System.out.println("Thank you!!");
     }      
 }
+
+
     }       
     
     
