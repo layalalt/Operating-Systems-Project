@@ -42,8 +42,14 @@ public class CPUscheduler
                        int priority = key.nextInt();
                        if(priority == 1)
                           Q1size++;
-                       else
+                       else if(priority == 2)
                           Q2size++; 
+                       else
+                       {
+                           System.out.println("The only allowed numbers are 1or 2!! Please enter again.");
+                           i--;
+                           continue;
+                       }
                        
                        System.out.print("Enter process #" + (i+1) + "'s arrival time: ");
                        int arrivalTime = key.nextInt();
@@ -234,7 +240,12 @@ public class CPUscheduler
 }
 
 
-    }       
+
+
+
+
+
+
     
-    
-}
+
+
