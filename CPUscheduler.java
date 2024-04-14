@@ -1,4 +1,5 @@
 import java.util.*;
+import java.io.*;
 public class CPUscheduler 
 {
     
@@ -8,22 +9,22 @@ public class CPUscheduler
     {
         key.useDelimiter("\n");
         boolean loopFlag = true;
-        do
-        {
-            System.out.println("Hello!! What would you like to do?");
-            System.out.println("1. Enter process’ information.\n" +
+        
+        System.out.println("Hello!! What would you like to do?");
+        System.out.println("1. Enter process’ information.\n" +
                                "2. Report detailed information about each process and different scheduling criteria.\n" +
                                "3. Exit the program.");
-            System.out.print("Enter the number: ");
-            int menu = key.nextInt();
-            int totalTime = 0, totalTimeR = 0 ,totalTimeW = 0, totalTimeTA = 0;
-            PCB processes [] = new PCB[1], Q1 [], Q2 [];
-            int Q1h = 0, Q1t = 0, Q2h = 0, Q2t = 0; //head and tail pointers for the queues
-            String Gantt [] = new String[1]; //Gantt chart simulator
-            int GanttIndex = 0;
-            int processNum = 0;
+        System.out.print("Enter the number: ");
+        int menu = key.nextInt();
+        int totalTime = 0, totalTimeR = 0 ,totalTimeW = 0, totalTimeTA = 0;
+        PCB processes [] = new PCB[1], Q1 [], Q2 [];
+        int Q1h = 0, Q1t = 0, Q2h = 0, Q2t = 0; //head and tail pointers for the queues
+        String Gantt [] = new String[1]; //Gantt chart simulator
+        int GanttIndex = 0;
+        int processNum = 0;
             
-            
+        do
+        {
             switch(menu)
             {
                 case 1:
@@ -158,18 +159,21 @@ public class CPUscheduler
                           {
                               if(processes[j].remainingTime != 0)
                                   terminationFlag = false;
-                              else
-                                  continue;
+                 
                           }
                           if(terminationFlag)
-                            break;
+                             break;
                         }    
                     }
+                    break;
                     
                     
                 case 2: 
                     
-                    
+                    totalTime = 0;
+                    totalTimeR = 0;
+                    totalTimeW = 0;
+                    totalTimeTA = 0;
                     for(int i=0; i<processNum; i++)      
                         processes[i].displayInfo();
                     
@@ -216,6 +220,39 @@ public class CPUscheduler
 		    System.out.printf("Average Turnaround Time is: %.2f \n", totalTimeTA/(double)processNum);
                     System.out.printf("Average Response Time is: %.2f \n\n", totalTimeR/(double)processNum);
 
+                    
+                  try
+                  {
+                    PrintWriter file = new PrintWriter(new FileOutputStream(new File("Report.txt")));
+               
+                    file.print("Scheduling order of the processes: ");
+                    file.println("[" + order + "]");
+                    
+                    for(int i=0; i<processNum; i++) 
+                    { 
+                       file.println("Process ID : " + processes[i].processID ) ;              
+                       file.println("Arrival time : " + processes[i].arrivalTime) ;        
+                       file.println("CPU burst : " + processes[i].cpuBurst) ;
+                       file.println("Start time : " + processes[i].startTime) ;
+                       file.println("Termination time : " + processes[i].terminationTime) ;   
+                       file.println("Turnaround time : " + processes[i].turnaroundTime) ;
+                       file.println("Waiting time : " + processes[i].waitingTime) ;
+                       file.println("Response time : " + processes[i].responseTime) ;    
+                       file.println();
+                    }
+            
+                    file.printf("Average turnaround time : %.2f \n", totalTimeTA/(double)processNum ) ;
+                    file.printf("Average waiting time : %.2f \n", totalTimeW/(double)processNum) ;
+                    file.printf("Average response time : %.2f \n", totalTimeR/(double)processNum) ; 
+            
+                    file.close() ;
+                  }
+                  catch(Exception e)
+                  { 
+                     e.printStackTrace();
+                  }
+        
+                
                     break;
                     
                     
@@ -230,7 +267,33 @@ public class CPUscheduler
                     System.out.println("Please ensure the number is within the allowed range!");
                     break; 
                 
-            }     
+            }   
+            if(!loopFlag)
+               break;
+            
+            System.out.println("Hello!! What would you like to do?");
+            System.out.println("1. Enter process’ information.\n" +
+                               "2. Report detailed information about each process and different scheduling criteria.\n" +
+                               "3. Exit the program.");
+            System.out.print("Enter the number: ");
+            menu = key.nextInt();
+            if(menu == 1)
+            { 
+                totalTime = 0;
+                totalTimeR = 0; 
+                totalTimeW = 0; 
+                totalTimeTA = 0;
+                processes = new PCB[1];
+                Q1 = null;
+                Q2 = null;
+                Q1h = 0;
+                Q1t = 0;
+                Q2h = 0;
+                Q2t = 0;
+                Gantt = new String[1]; //Gantt chart simulator
+                GanttIndex = 0;
+                processNum = 0;
+            }
             
         }while(loopFlag);  
         
@@ -238,8 +301,6 @@ public class CPUscheduler
         System.out.println("Thank you!!");
     }      
 }
-
-
 
 
 
