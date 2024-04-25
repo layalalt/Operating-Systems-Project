@@ -1,11 +1,12 @@
 import java.util.*;
 import java.io.*;
+
 public class CPUscheduler 
 {
     
     public static Scanner key = new Scanner(System.in);
     
-    public static void main(String [] args)
+    public static void main(String[] args)
     {
         key.useDelimiter("\n");
         boolean loopFlag = true;
@@ -19,7 +20,7 @@ public class CPUscheduler
         int totalTime = 0, totalTimeR = 0 ,totalTimeW = 0, totalTimeTA = 0;
         PCB processes [] = new PCB[1], Q1 [], Q2 [];
         int Q1h = 0, Q1t = 0, Q2h = 0, Q2t = 0; //head and tail pointers for the queues
-        String Gantt [] = new String[1]; //Gantt chart simulator
+        String Gantt [] = new String[1]; //Gantt chart simulator for testing
         int GanttIndex = 0;
         int processNum = 0;
             
@@ -47,7 +48,7 @@ public class CPUscheduler
                           Q2size++; 
                        else
                        {
-                           System.out.println("The only allowed numbers are 1or 2!! Please enter again.");
+                           System.out.println("The only allowed numbers are 1 or 2!! Please try again."); //number entered is out of range
                            i--;
                            continue;
                        }
@@ -67,7 +68,7 @@ public class CPUscheduler
                     Q2 = new PCB[Q2size];
                     Gantt = new String[totalTime]; 
                     
-                    for(int i=0; i<100; i++) //just assumes it will take less than 100 ms (clock simulator)
+                    for(int i=0; i<100; i++) //just assumes it will take less than 100 ms (clock simulator) 
                     {
                         int startIndex = Q2h, endIndex; 
                         boolean SJFInserted = false;
@@ -93,10 +94,10 @@ public class CPUscheduler
                         }
                         
                         endIndex = Q2processCounter; //prevents null pointer exceptions by ensuring only initialized processes are sorted
-                        if(SJFInserted) //sorts only if a new element is added
+                        if(SJFInserted) //sorts only if a new element is added to the SJF queue
                           Arrays.sort(Q2, startIndex, endIndex);
                         
-                        if(Q1[Q1h] != null && (Q1[Q1h].timeSliceRemainingTime == 0)) // time slice of executing process finished and must be readded in RR queue
+                        if(Q1[Q1h] != null && (Q1[Q1h].timeSliceRemainingTime == 0)) //time slice of executing process finished and must be readded in RR queue
                         {         
                              Q1[Q1h].timeSliceRemainingTime = -1;
                              Q1[Q1t] = Q1[Q1h];
@@ -132,7 +133,7 @@ public class CPUscheduler
                         else if(Q2[Q2h] != null && (Q2[Q2h].remainingTime != 0)) //not empty 
                         {
                           
-                            PCB currentProcess = Q2[Q2h]; //for ease of manipulation
+                            PCB currentProcess = Q2[Q2h]; //for simplifying code
                             if(currentProcess.responseTime == -1) //did not get scheduled yet
                             {
                                currentProcess.responseTime = i - currentProcess.arrivalTime;
@@ -159,10 +160,10 @@ public class CPUscheduler
                           {
                               if(processes[j].remainingTime != 0)
                                   terminationFlag = false;
-                 
                           }
                           if(terminationFlag)
                              break;
+                          
                         }    
                     }
                     break;
@@ -170,18 +171,25 @@ public class CPUscheduler
                     
                 case 2: 
                     
+                    if(processNum == 0)
+                    {
+                        System.out.println("\nNo processes entered.\n");
+                        break;
+                    }
+                        
                     totalTime = 0;
                     totalTimeR = 0;
                     totalTimeW = 0;
                     totalTimeTA = 0;
+                    
+                    System.out.println();
+                    
                     for(int i=0; i<processNum; i++)      
                         processes[i].displayInfo();
+                      
                     
-                    System.out.println("\n");
-  
-                    
-                    for(int i=0; i<Gantt.length; i++) //testing
-                       System.out.print(Gantt[i] + " ");
+                   /** for(int i=0; i<Gantt.length; i++) //for testing
+                       System.out.print(Gantt[i] + " ");*/
                     
                     System.out.println("\n");
 
@@ -216,9 +224,9 @@ public class CPUscheduler
                         totalTimeR += processes[i].responseTime;
 		    }
 
-		    System.out.printf("Average Waiting Time is: %.2f \n", totalTimeW/(double)processNum);
-		    System.out.printf("Average Turnaround Time is: %.2f \n", totalTimeTA/(double)processNum);
-                    System.out.printf("Average Response Time is: %.2f \n\n", totalTimeR/(double)processNum);
+		    System.out.printf("Average waiting time: %.2f \n", totalTimeW/(double)processNum);
+		    System.out.printf("Average turnaround time: %.2f \n", totalTimeTA/(double)processNum);
+                    System.out.printf("Average response time: %.2f \n\n", totalTimeR/(double)processNum);
 
                     
                   try
@@ -252,8 +260,7 @@ public class CPUscheduler
                      e.printStackTrace();
                   }
         
-                
-                    break;
+                   break;
                     
                     
                     
@@ -271,13 +278,14 @@ public class CPUscheduler
             if(!loopFlag)
                break;
             
-            System.out.println("Hello!! What would you like to do?");
+            System.out.println("\nHello!! What would you like to do?");
             System.out.println("1. Enter process’ information.\n" +
                                "2. Report detailed information about each process and different scheduling criteria.\n" +
                                "3. Exit the program.");
             System.out.print("Enter the number: ");
             menu = key.nextInt();
-            if(menu == 1)
+            
+            if(menu == 1) //reinitializes queues
             { 
                 totalTime = 0;
                 totalTimeR = 0; 
@@ -290,7 +298,7 @@ public class CPUscheduler
                 Q1t = 0;
                 Q2h = 0;
                 Q2t = 0;
-                Gantt = new String[1]; //Gantt chart simulator
+                Gantt = new String[1]; 
                 GanttIndex = 0;
                 processNum = 0;
             }
@@ -298,7 +306,7 @@ public class CPUscheduler
         }while(loopFlag);  
         
         System.out.println();
-        System.out.println("Thank you!!");
+        System.out.println("Thank you!");
     }      
 }
 
