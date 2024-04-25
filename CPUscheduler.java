@@ -238,7 +238,8 @@ public class CPUscheduler
                     
                     for(int i=0; i<processNum; i++) 
                     { 
-                       file.println("Process ID : " + processes[i].processID ) ;              
+                       file.println("Process ID : " + processes[i].processID ) ;  
+                       file.println("Process priority : " + processes[i].priority ) ;                         
                        file.println("Arrival time : " + processes[i].arrivalTime) ;        
                        file.println("CPU burst : " + processes[i].cpuBurst) ;
                        file.println("Start time : " + processes[i].startTime) ;
@@ -310,6 +311,14 @@ public class CPUscheduler
     }      
 }
 
+
+
+
+
+
+
+
+    
 
 
 
