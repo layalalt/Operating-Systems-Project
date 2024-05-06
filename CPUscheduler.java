@@ -72,8 +72,6 @@ public class CPUscheduler
                     {
                         int startIndex = Q2h, endIndex; 
                         boolean SJFInserted = false;
-                        if(Q2[Q2h] != null && (Q2[Q2h].cpuBurst != Q2[Q2h].remainingTime)) //first process started executing in SJF queue (prevents preemption)
-                           startIndex++;
                         for(int j=0; j<processNum; j++)
                         {
                             if(processes[j].arrivalTime == i)
@@ -310,8 +308,6 @@ public class CPUscheduler
         System.out.println("Thank you!");
     }      
 }
-
-
 
 
 
