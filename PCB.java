@@ -31,7 +31,7 @@ public class PCB implements Comparable<PCB>
     
     public int compareTo(PCB p) //for SJF sorting
     {
-        return this.cpuBurst - p.cpuBurst;
+        return this.remainingTime - p.remainingTime;
     }
     
     public void displayInfo() 
